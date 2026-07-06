@@ -1,11 +1,13 @@
 """
 Journal class to manage journal entries
+Enhanced with content support
 """
 
 from datetime import datetime
-from entry import Entry
+from .entry import Entry
 import json
 import os
+from collections import Counter
 
 
 class Journal:
@@ -16,9 +18,9 @@ class Journal:
         if not os.path.exists(data_dir):
             os.makedirs(data_dir)
     
-    def create_entry(self, title, mood, content=''):
+    def create_entry(self, title, mood, content='', tags=None):
         """Create a new journal entry"""
-        entry = Entry(title, mood, content)
+        entry = Entry(title, mood, content, tags or [])
         self._save_entry(entry)
         return entry.to_dict()
     
@@ -41,17 +43,34 @@ class Journal:
                 entries.append(entry)
         return entries
     
-    def search_entries(self, query):
-        """Search entries by keyword"""
+    def get_entry_by_id(self, entry_id):
+        """Get a specific entry by ID"""
+        for entry in self.get_all_entries():
+            if entry['id'] == entry_id:
+                return entry
+        return None
+    
+    def search_entries(self, query, tag=None):
+        """Search entries by keyword and optionally filter by tag"""
         results = []
         query_lower = query.lower()
         
         for entry in self.get_all_entries():
+            # Check tag filter first
+            if tag and tag not in entry.get('tags', []):
+                continue
+            
+            # Search in title and content
             if (query_lower in entry['title'].lower() or 
-                query_lower in entry['content'].lower()):
+                query_lower in entry.get('content', '').lower()):
                 results.append(entry)
         
         return results
+    
+    def get_entries_by_tag(self, tag):
+        """Get all entries with a specific tag"""
+        return [entry for entry in self.get_all_entries() 
+                if tag in entry.get('tags', [])]
     
     def get_statistics(self):
         """Get journal statistics"""
@@ -61,17 +80,45 @@ class Journal:
             return {
                 'total_entries': 0,
                 'average_mood': 0,
-                'last_entry_date': None
+                'last_entry_date': None,
+                'most_common_tag': None
             }
         
-        total_mood = sum(entry['mood'] for entry in entries)
-        average_mood = total_mood / len(entries)
+        # Calculate mood stats
+        moods = [entry['mood'] for entry in entries]
+        average_mood = sum(moods) / len(moods) if moods else 0
+        
+        # Find most common tag
+        all_tags = []
+        for entry in entries:
+            all_tags.extend(entry.get('tags', []))
+        most_common_tag = Counter(all_tags).most_common(1)[0][0] if all_tags else None
         
         return {
             'total_entries': len(entries),
             'average_mood': average_mood,
-            'last_entry_date': entries[0]['date'] if entries else None
+            'last_entry_date': entries[0]['date'] if entries else None,
+            'most_common_tag': most_common_tag,
+            'mood_distribution': self._get_mood_distribution(entries)
         }
+    
+    def _get_mood_distribution(self, entries):
+        """Get distribution of moods"""
+        distribution = {str(i): 0 for i in range(1, 11)}
+        for entry in entries:
+            distribution[str(entry['mood'])] += 1
+        return distribution
+    
+    def get_mood_emoji(self, mood):
+        """Get emoji representation of mood"""
+        if mood <= 3:
+            return '😞'
+        elif mood <= 5:
+            return '😐'
+        elif mood <= 7:
+            return '🙂'
+        else:
+            return '😊'
     
     def _save_entry(self, entry):
         """Save entry to file"""

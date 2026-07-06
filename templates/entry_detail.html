@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entry Detail - Daily Journal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">📔 Daily Journal</div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/entries">Entries</a></li>
+                <li><a href="/stats">Statistics</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="entry-detail">
+            <a href="/entries" class="back-link">← Back to Entries</a>
+            
+            <div id="entry-content" class="entry-detail-content">
+                <p class="loading">Loading entry...</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <script src="{{ url_for('static', filename='entry_detail.js') }}"></script>
+</body>
+</html>

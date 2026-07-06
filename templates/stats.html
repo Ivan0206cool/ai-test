@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics - Daily Journal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">📔 Daily Journal</div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/entries">Entries</a></li>
+                <li><a href="/stats" class="active">Statistics</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="stats-section">
+            <h1>Journal Statistics</h1>
+            
+            <div class="stats-grid">
+                <div class="stat-card large">
+                    <div class="stat-label">Total Entries</div>
+                    <div class="stat-number" id="stat-total">0</div>
+                </div>
+                
+                <div class="stat-card large">
+                    <div class="stat-label">Average Mood</div>
+                    <div class="stat-number" id="stat-average">0.0</div>
+                </div>
+                
+                <div class="stat-card large">
+                    <div class="stat-label">Most Used Tag</div>
+                    <div class="stat-value" id="stat-tag">-</div>
+                </div>
+            </div>
+            
+            <div class="mood-chart">
+                <h2>Mood Distribution</h2>
+                <div id="mood-bars" class="mood-bars"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <script src="{{ url_for('static', filename='stats.js') }}"></script>
+</body>
+</html>
