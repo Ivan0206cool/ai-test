@@ -4,7 +4,7 @@ Enhanced with content support
 """
 
 from datetime import datetime
-from .entry import Entry
+from entry import Entry
 import json
 import os
 from collections import Counter
