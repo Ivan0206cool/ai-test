@@ -5,7 +5,13 @@ With enhanced content/body support
 
 import click
 from datetime import datetime
-from .journal import Journal
+import sys
+import os
+
+# Add src directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from journal import Journal
 
 
 @click.group()
@@ -159,12 +165,15 @@ def stats():
 @click.option('--debug', is_flag=True, help='Run in debug mode')
 def web(port, debug):
     """Launch web interface"""
-    from .app import create_app
-    app = create_app()
-    click.echo(f"\n🚀 Starting Daily Journal Web Interface...")
-    click.echo(f"📱 Open your browser and go to: http://localhost:{port}")
-    click.echo(f"Press Ctrl+C to stop\n")
-    app.run(debug=debug, port=port, host='127.0.0.1')
+    try:
+        from app import create_app
+        app = create_app()
+        click.echo(f"\n🚀 Starting Daily Journal Web Interface...")
+        click.echo(f"📱 Open your browser and go to: http://localhost:{port}")
+        click.echo(f"Press Ctrl+C to stop\n")
+        app.run(debug=debug, port=port, host='127.0.0.1')
+    except Exception as e:
+        click.echo(f"✗ Error starting web interface: {str(e)}", err=True)
 
 
 if __name__ == '__main__':

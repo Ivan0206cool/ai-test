@@ -5,13 +5,20 @@ Flask Web Application for Daily Journal
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 from datetime import datetime
-from .journal import Journal
+from journal import Journal
 import os
+import sys
 
 
 def create_app():
     """Create and configure the Flask app"""
-    app = Flask(__name__, template_folder='../templates', static_folder='../static')
+    # Get the directory of this file
+    src_dir = os.path.dirname(os.path.abspath(__file__))
+    root_dir = os.path.dirname(src_dir)
+    
+    app = Flask(__name__, 
+                template_folder=os.path.join(root_dir, 'templates'), 
+                static_folder=os.path.join(root_dir, 'static'))
     CORS(app)
     
     journal = Journal()
